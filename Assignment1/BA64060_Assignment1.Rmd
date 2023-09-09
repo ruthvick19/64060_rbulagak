@@ -1,0 +1,83 @@
+---
+title: "BA64060_Assignment1"
+Name: Ruthvick Bulagakula
+date: "2023-09-08"
+output:
+  pdf_document: default
+  html_document: default
+KSU ID: '811221623'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Dataset download
+I have downloaded my dataset from Kaggle. This dataset explains about medical details.
+https://www.kaggle.com/datasets/mirichoi0218/insurance?resource=download
+
+# Import
+
+I have imported dataset using read.csv
+
+```{r}
+medical_read <- read.csv("insurance.csv", header = TRUE, sep = ",")
+
+```
+Checking whether data has been read or not
+```{r}
+head(medical_read)
+colnames(medical_read)
+```
+# Descriptive Statistics 
+
+Descriptive Statistics for quantitative variables
+```{r}
+quant_abc = c("age", "bmi", "charges")
+summary_quant = summary(medical_read[quant_abc])
+print(summary_quant)
+```
+Descriptive Statistics for categorical variables
+```{r}
+cat_sr = c("smoker", "region")
+summary_cat = sapply(medical_read[cat_sr], table)
+print(summary_cat)
+```
+
+# Transformation
+```{r}
+transformation = medical_read$charges/1000
+```
+New dataset after transformation
+```{r}
+sliced_data = medical_read[, c("age","bmi", "charges")]
+sliced_data$tran_charges = transformation
+head(sliced_data)
+
+```
+
+# Plot
+Barplot for smoker and non-smokers
+
+```{r}
+smoker_counts <- table(medical_read$smoker)
+barplot(smoker_counts, 
+        xlab = "Smoker",
+        ylab = "Count",
+        col = "blue",
+        main = "Barplot of Smoker Counts"
+)
+```
+
+Scatter plot for Charges and BMI
+
+```{r}
+plot(x = sliced_data$tran_charges, y = sliced_data$bmi,
+    xlab = "Charges/1000",
+    ylab = "BMI",
+    xlim = c(1, 70),
+    ylim = c(10, 60),       
+    main = "Charges vs BMI"
+)
+
+```
