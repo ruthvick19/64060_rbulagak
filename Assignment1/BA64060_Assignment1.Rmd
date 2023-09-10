@@ -1,6 +1,6 @@
 ---
 title: "BA64060_Assignment1"
-Name: Ruthvick Bulagakula
+author: Ruthvick Bulagakula
 date: "2023-09-08"
 output:
   pdf_document: default
