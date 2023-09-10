@@ -21,7 +21,7 @@ https://www.kaggle.com/datasets/mirichoi0218/insurance?resource=download
 I have imported dataset using read.csv
 
 ```{r}
-medical_read <- read.csv("insurance.csv", header = TRUE, sep = ",")
+medical_read = read.csv("insurance.csv", header = TRUE, sep = ",")
 
 ```
 Checking whether data has been read or not
@@ -60,13 +60,16 @@ head(sliced_data)
 Barplot for smoker and non-smokers
 
 ```{r}
-smoker_counts <- table(medical_read$smoker)
+smoker_counts = table(medical_read$smoker)
+
 barplot(smoker_counts, 
         xlab = "Smoker",
         ylab = "Count",
-        col = "blue",
-        main = "Barplot of Smoker Counts"
+        col = c("green", "red"),
+        main = "Barplot of Smoker Counts",
+        names.arg = names(smoker_counts) 
 )
+
 ```
 
 Scatter plot for Charges and BMI
