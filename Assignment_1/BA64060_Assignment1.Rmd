@@ -80,7 +80,7 @@ plot(x = sliced_data$tran_charges, y = sliced_data$bmi,
     ylab = "BMI",
     xlim = c(1, 70),
     ylim = c(10, 60),       
-    main = "Charges vs BMI"
+    main = "Scatterplot of Charges vs BMI"
 )
 
 ```
