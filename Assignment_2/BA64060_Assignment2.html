@@ -633,7 +633,12 @@ valid.norm.df = predict(norm.values, valid.norm.df)
 
 test.norm.df = predict(norm.values, test.norm.df)</code></pre>
 <p><strong>Now predict using KNN</strong></p>
-<pre class="r"><code>validation_knn_pred = class::knn(train = train.norm.df, 
+<pre class="r"><code>training_knn_pred = class::knn(train = train.norm.df, 
+                           test = train.norm.df,  
+                           cl = train.df$Personal.Loan, 
+                           k = 3)
+
+validation_knn_pred = class::knn(train = train.norm.df, 
                            test = valid.norm.df,  
                            cl = train.df$Personal.Loan, 
                            k = 3)
@@ -642,6 +647,39 @@ test_knn_pred = class::knn(train = train.norm.df,
                      test = test.norm.df,  
                      cl = train.df$Personal.Loan, 
                      k = 3)</code></pre>
+<p><strong>Confusion Matrix for Training set</strong></p>
+<pre class="r"><code>training_confusion_matrix = confusionMatrix(training_knn_pred, 
+                                               as.factor(train.df$Personal.Loan), 
+                                               positive = &quot;1&quot;)
+
+training_confusion_matrix</code></pre>
+<pre><code>## Confusion Matrix and Statistics
+## 
+##           Reference
+## Prediction    0    1
+##          0 2263   54
+##          1    5  178
+##                                          
+##                Accuracy : 0.9764         
+##                  95% CI : (0.9697, 0.982)
+##     No Information Rate : 0.9072         
+##     P-Value [Acc &gt; NIR] : &lt; 2.2e-16      
+##                                          
+##                   Kappa : 0.8452         
+##                                          
+##  Mcnemar&#39;s Test P-Value : 4.129e-10      
+##                                          
+##             Sensitivity : 0.7672         
+##             Specificity : 0.9978         
+##          Pos Pred Value : 0.9727         
+##          Neg Pred Value : 0.9767         
+##              Prevalence : 0.0928         
+##          Detection Rate : 0.0712         
+##    Detection Prevalence : 0.0732         
+##       Balanced Accuracy : 0.8825         
+##                                          
+##        &#39;Positive&#39; Class : 1              
+## </code></pre>
 <p><strong>Confusion Matrix for Validation set</strong></p>
 <pre class="r"><code>validation_confusion_matrix = confusionMatrix(validation_knn_pred, 
                                                as.factor(valid.df$Personal.Loan), 
@@ -717,6 +755,20 @@ Matrix</h2>
 </div>
 <div id="differences" class="section level2">
 <h2>Differences</h2>
+<p><strong>Test VS Train</strong></p>
+<p><strong><em>Accuracy:</em></strong> Accuracy of Training Confusion
+matrix(0.9764) is slightly higher than Test Confusion matrix(0.961).</p>
+<p><strong><em>Sensitivity(True Positive Rate):</em></strong> Training
+Confusion Matrix has a higher sensitivity (0.7672) compared to Test
+Confusion Matrix (0.6875).</p>
+<p><strong><em>Specificity(True Negative Rate):</em></strong> Both
+matrices have similar specificity values and they are both very high.
+Training Confusion Matrix has a slightly higher specificity (0.9978)
+compared to Test Confusion Matrix (0.9955).</p>
+<p><strong><em>Precision:</em></strong> The precision in Training
+Confusion Matrix (0.9727) has a higher value that Test Confusion Matrix
+(0.9506).</p>
+<p><strong>Test VS Validation</strong></p>
 <p><strong><em>Accuracy:</em></strong> Accuracy of Validation Confusion
 matrix(0.968) is slightly higher than Test Confusion matrix(0.961).</p>
 <p><strong><em>Sensitivity(True Positive Rate):</em></strong> Both
@@ -733,7 +785,7 @@ Matrix (0.9506) is higher Validation Confusion Matrix (0.94000).</p>
 <div id="reasons" class="section level2">
 <h2>Reasons</h2>
 <p><strong><em>Dataset:</em></strong> Since we used different datasets
-with different size for both validation and test.</p>
+with different size for Training, validation and test.</p>
 </div>
 </div>
 

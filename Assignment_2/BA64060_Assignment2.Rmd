@@ -304,6 +304,11 @@ test.norm.df = predict(norm.values, test.norm.df)
 
 ```{r}
 
+training_knn_pred = class::knn(train = train.norm.df, 
+                           test = train.norm.df,  
+                           cl = train.df$Personal.Loan, 
+                           k = 3)
+
 validation_knn_pred = class::knn(train = train.norm.df, 
                            test = valid.norm.df,  
                            cl = train.df$Personal.Loan, 
@@ -316,6 +321,17 @@ test_knn_pred = class::knn(train = train.norm.df,
 
 ```
 
+**Confusion Matrix for Training set**
+
+```{r}
+
+training_confusion_matrix = confusionMatrix(training_knn_pred, 
+                                               as.factor(train.df$Personal.Loan), 
+                                               positive = "1")
+
+training_confusion_matrix
+
+```
 **Confusion Matrix for Validation set**
 
 ```{r}
@@ -345,6 +361,18 @@ test_confusion_matrix
 
 ## Differences
 
+**Test VS Train**
+
+***Accuracy:*** Accuracy of Training Confusion matrix(0.9764) is slightly higher than Test Confusion matrix(0.961).
+
+***Sensitivity(True Positive Rate):*** Training Confusion Matrix has a higher sensitivity (0.7672) compared to Test Confusion Matrix (0.6875).
+
+***Specificity(True Negative Rate):*** Both matrices have similar specificity values and they are both very high. Training Confusion Matrix has a slightly higher specificity (0.9978) compared to Test Confusion Matrix (0.9955).
+
+***Precision:*** The precision in Training Confusion Matrix (0.9727) has a higher value that Test Confusion Matrix (0.9506).
+
+**Test VS Validation**
+
 ***Accuracy:*** Accuracy of Validation Confusion matrix(0.968) is slightly higher than Test Confusion matrix(0.961).
 
 ***Sensitivity(True Positive Rate):*** Both matrices have similar sensitivity values but Validation Confusion Matrix has a slightly higher sensitivity (0.69118) compared to Test Confusion Matrix (0.6875).
@@ -355,4 +383,4 @@ test_confusion_matrix
 
 ## Reasons
 
-***Dataset:*** Since we used different datasets with different size for both validation and test.
+***Dataset:*** Since we used different datasets with different size for Training, validation and test.
