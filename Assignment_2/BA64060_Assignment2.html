@@ -401,7 +401,13 @@ the predictor information?</li>
 <li>Show the confusion matrix for the validation data that results from
 using the best k.</li>
 </ol>
-<p>Answer: Reference Prediction 0 1 0 1769 178 1 50 3</p>
+<p>Answer:</p>
+<pre class="r"><code>matrix(c(1769, 178, 50, 3), nrow = 2, byrow = TRUE,
+                           dimnames = list(Prediction = c(0, 1), Reference = c(0, 1)))</code></pre>
+<pre><code>##           Reference
+## Prediction    0   1
+##          0 1769 178
+##          1   50   3</code></pre>
 <ol start="4" style="list-style-type: decimal">
 <li>Consider the following customer: Age = 40, Experience = 10, Income =
 84,Family = 2, CCAvg = 2, Education_1 = 0, Education_2 = 1, Education_3
@@ -415,7 +421,28 @@ sets (50% : 30% : 20%). Apply the k-NN method with the k chosen above.
 Compare the confusion matrix of the test set with that of the training
 and validation sets. Comment on the differences and their reason.</li>
 </ol>
-<p>Answer: Validation Confusion Matrix and Test Confusion Matrix</p>
+<p>Answer:</p>
+<p>Training Set Confusion Matrix:</p>
+<pre class="r"><code>matrix(c(2263, 54, 5, 178), nrow = 2, byrow = TRUE,
+                           dimnames = list(Prediction = c(0, 1), Reference = c(0, 1)))</code></pre>
+<pre><code>##           Reference
+## Prediction    0   1
+##          0 2263  54
+##          1    5 178</code></pre>
+<p>Validation Set Confusion Matrix:</p>
+<pre class="r"><code>matrix(c(1358, 42 , 6 , 94), nrow = 2, byrow = TRUE,
+                           dimnames = list(Prediction = c(0, 1), Reference = c(0, 1)))</code></pre>
+<pre><code>##           Reference
+## Prediction    0  1
+##          0 1358 42
+##          1    6 94</code></pre>
+<p>Testing Set Confusion Matrix:</p>
+<pre class="r"><code>matrix(c(884, 35, 4, 77), nrow = 2, byrow = TRUE,
+                           dimnames = list(Prediction = c(0, 1), Reference = c(0, 1)))</code></pre>
+<pre><code>##           Reference
+## Prediction   0  1
+##          0 884 35
+##          1   4 77</code></pre>
 <div id="data-import-and-cleaning" class="section level3">
 <h3>Data Import and Cleaning</h3>
 <p><strong>Calling pre-installed libraries.</strong></p>
@@ -784,8 +811,10 @@ Matrix (0.9506) is higher Validation Confusion Matrix (0.94000).</p>
 </div>
 <div id="reasons" class="section level2">
 <h2>Reasons</h2>
-<p><strong><em>Dataset:</em></strong> Since we used different datasets
-with different size for Training, validation and test.</p>
+<p><strong><em>Dataset:</em></strong> Since, we used different dataset
+size for Training, validation and test.Also, higher values in confusion
+matrix for Training data is because we used Same dataset in test
+argument for Train KNN.</p>
 </div>
 </div>
 

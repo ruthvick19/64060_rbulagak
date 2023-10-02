@@ -38,11 +38,14 @@ Answer: K = 3
 
 3. Show the confusion matrix for the validation data that results from using the best k.
 
-Answer: 
-             Reference
-Prediction    0    1
-         0 1769  178
-         1   50    3
+Answer:
+
+```{r}
+
+matrix(c(1769, 178, 50, 3), nrow = 2, byrow = TRUE,
+                           dimnames = list(Prediction = c(0, 1), Reference = c(0, 1)))
+
+```
          
 4. Consider the following customer: Age = 40, Experience = 10, Income = 84,Family = 2, CCAvg = 2, Education_1 = 0, Education_2 = 1, Education_3 = 0, Mortgage = 0, Securities Account = 0, CD Account = 0, Online = 1 and Credit Card = 1. Classify the customer using the best k.
 
@@ -50,7 +53,32 @@ Answer: 0
 
 5. Repartition the data, this time into training, validation, and test sets (50% : 30% : 20%). Apply the k-NN method with the k chosen above. Compare the confusion matrix of the test set with that of the training and validation sets. Comment on the differences and their reason.
 
-Answer: Validation Confusion Matrix and Test Confusion Matrix
+Answer: 
+
+Training Set Confusion Matrix:
+
+```{r}
+
+matrix(c(2263, 54, 5, 178), nrow = 2, byrow = TRUE,
+                           dimnames = list(Prediction = c(0, 1), Reference = c(0, 1)))
+
+```
+Validation Set Confusion Matrix:
+
+```{r}
+
+matrix(c(1358, 42 , 6 , 94), nrow = 2, byrow = TRUE,
+                           dimnames = list(Prediction = c(0, 1), Reference = c(0, 1)))
+
+```
+Testing Set Confusion Matrix:
+
+```{r}
+
+matrix(c(884, 35, 4, 77), nrow = 2, byrow = TRUE,
+                           dimnames = list(Prediction = c(0, 1), Reference = c(0, 1)))
+
+```
 
 
 ### Data Import and Cleaning
@@ -383,4 +411,4 @@ test_confusion_matrix
 
 ## Reasons
 
-***Dataset:*** Since we used different datasets with different size for Training, validation and test.
+***Dataset:*** Since, we used different dataset size for Training, validation and test.Also, higher values in confusion matrix for Training data is because we used Same dataset in test argument for Train KNN.
