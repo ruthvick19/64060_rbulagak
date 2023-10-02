@@ -29,7 +29,7 @@ Partition the data into training (60%) and validation (40%) sets
 ## Questions and Answers
 1. Age = 40, Experience = 10, Income = 84, Family = 2, CCAvg = 2, Education_1 = 0, Education_2 = 1, Education_3 = 0, Mortgage = 0, Securities Account = 0, CD Account = 0, Online = 1, and Credit Card = 1. Perform a k-NN classification with all predictors except ID and ZIP code using k = 1. Remember to transform categorical predictors with more than two categories into dummy variables first. Specify the success class as 1 (loan acceptance), and use the default cutoff value of 0.5. How would this customer be classified?
 
-Answer: 0 
+Answer: 0(Customer Loan Rejected) 
 
 2. What is a choice of k that balances between overfitting and ignoring the predictor
 information?
@@ -49,7 +49,7 @@ matrix(c(1769, 178, 50, 3), nrow = 2, byrow = TRUE,
          
 4. Consider the following customer: Age = 40, Experience = 10, Income = 84,Family = 2, CCAvg = 2, Education_1 = 0, Education_2 = 1, Education_3 = 0, Mortgage = 0, Securities Account = 0, CD Account = 0, Online = 1 and Credit Card = 1. Classify the customer using the best k.
 
-Answer: 0
+Answer: 0(Customer Loan Rejected)
 
 5. Repartition the data, this time into training, validation, and test sets (50% : 30% : 20%). Apply the k-NN method with the k chosen above. Compare the confusion matrix of the test set with that of the training and validation sets. Comment on the differences and their reason.
 
@@ -79,7 +79,33 @@ matrix(c(884, 35, 4, 77), nrow = 2, byrow = TRUE,
                            dimnames = list(Prediction = c(0, 1), Reference = c(0, 1)))
 
 ```
+### Differences
 
+**Test VS Train**
+
+***Accuracy:*** Accuracy of Training Confusion matrix(0.9764) is slightly higher than Test Confusion matrix(0.961).
+
+***Sensitivity(True Positive Rate):*** Training Confusion Matrix has a higher sensitivity (0.7672) compared to Test Confusion Matrix (0.6875).
+
+***Specificity(True Negative Rate):*** Both matrices have similar specificity values and they are both very high. Training Confusion Matrix has a slightly higher specificity (0.9978) compared to Test Confusion Matrix (0.9955).
+
+***Precision:*** The precision in Training Confusion Matrix (0.9727) has a higher value that Test Confusion Matrix (0.9506).
+
+**Test VS Validation**
+
+***Accuracy:*** Accuracy of Validation Confusion matrix(0.968) is slightly higher than Test Confusion matrix(0.961).
+
+***Sensitivity(True Positive Rate):*** Both matrices have similar sensitivity values but Validation Confusion Matrix has a slightly higher sensitivity (0.69118) compared to Test Confusion Matrix (0.6875).
+
+***Specificity(True Negative Rate):*** Both matrices have similar specificity values and they are both very high. Validation Confusion Matrix has a slightly higher specificity (0.99560) compared to Test Confusion Matrix (0.9955).
+
+***Precision:*** The precision in Test Confusion Matrix (0.9506) is higher Validation Confusion Matrix (0.94000).
+
+### Reasons
+
+***Dataset:*** Since, we used different dataset size for Training, validation and test.Also, higher values in confusion matrix for Training data is because we used Same dataset in test argument for Train KNN.
+
+## Code
 
 ### Data Import and Cleaning
 
@@ -99,18 +125,18 @@ library(e1071)
 
 ```{r}
 
-universal.df = read.csv("UniversalBank.csv")
+data.df = read.csv("UniversalBank.csv")
 
-dim(universal.df)
+dim(data.df)
 
-t(t(names(universal.df)))
+t(t(names(data.df)))
 
 ```
 **Dropping ID and ZIP.Code Columns**
 
 ```{r}
 
-universal.df = universal.df[,-c(1,5)]
+data.df = data.df[,-c(1,5)]
 
 
 ```
@@ -119,7 +145,7 @@ universal.df = universal.df[,-c(1,5)]
 
 ```{r}
 
-universal.df$Education = as.factor(universal.df$Education)
+data.df$Education = as.factor(data.df$Education)
 
 ```
 
@@ -127,11 +153,11 @@ universal.df$Education = as.factor(universal.df$Education)
 
 ```{r}
 
-groups = dummyVars(~., data = universal.df) # This creates the dummy groups
+groups = dummyVars(~., data = data.df) # This creates the dummy groups
 
-universal_m.df = as.data.frame(predict(groups,universal.df))
+data_m.df = as.data.frame(predict(groups,data.df))
 
-length(universal_m.df)
+length(data_m.df)
 
 ```
 **To ensure we get sample if we re run the code**
@@ -146,13 +172,13 @@ set.seed(1)
 
 ```{r}
 
-train.index = sample(row.names(universal_m.df), 0.6*dim(universal_m.df)[1])
+train.split = sample(row.names(data_m.df), 0.6*dim(data_m.df)[1])
 
-valid.index = setdiff(row.names(universal_m.df), train.index)  
+valid.split = setdiff(row.names(data_m.df), train.split)  
 
-train.df = universal_m.df[train.index,]
+train.df = data_m.df[train.split,]
 
-valid.df = universal_m.df[valid.index,]
+valid.df = data_m.df[valid.split,]
 
 t(t(names(train.df)))
 
@@ -294,17 +320,17 @@ set.seed(1)
 
 ```{r}
 
-training_set = sample(nrow(universal_m.df), 0.5 * nrow(universal_m.df))
+training_set = sample(nrow(data_m.df), 0.5 * nrow(data_m.df))
 
-validation_set = sample(setdiff(1:nrow(universal_m.df), training_set), 0.3 * nrow(universal_m.df))
+validation_set = sample(setdiff(1:nrow(data_m.df), training_set), 0.3 * nrow(data_m.df))
 
-test_set = setdiff(1:nrow(universal_m.df), union(training_set, validation_set))
+test_set = setdiff(1:nrow(data_m.df), union(training_set, validation_set))
 
-train.df = universal_m.df[training_set,]
+train.df = data_m.df[training_set,]
 
-valid.df = universal_m.df[validation_set,]
+valid.df = data_m.df[validation_set,]
 
-test.df = universal_m.df[test_set,]
+test.df = data_m.df[test_set,]
 
 ```
 
