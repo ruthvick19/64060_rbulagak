@@ -1,0 +1,249 @@
+---
+title: "BA64060_Assignment4"
+author: "Ruthvick Bulagakula"
+date: "2023-11-10"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Calling Installed Libraries
+
+```{r}
+
+library(cluster) 
+library(tidyverse)
+library(flexclust)
+library(factoextra)
+library(FactoMineR) 
+library(ggcorrplot)
+library(dbscan)
+
+```
+
+### Reading Data
+
+```{r}
+
+data= read.csv("pharmaceuticals.csv") 
+filter_data = data[3:11] 
+head(filter_data)
+
+```
+### Reason for Choosing Market_Cap, Beta, PE_Ratio, ROE, ROA, Asset_Turnover, Leverage, Rev_Growth, and Net_Profit_Margin
+
+The selected variables Market_Cap, Beta, PE_Ratio, ROE, ROA, Asset_Turnover, Leverage, Rev_Growth, and Net_Profit_Margin are common financial metrics used to evaluate and compare the performance of companies. These variables collectively provide a comprehensive overview of a firm's financial health, profitability, and efficiency.
+
+**1. Market_Cap:**
+
+Ranges from 0.41 to 199.47.
+Indicates the overall size and valuation of the pharmaceutical firms.
+
+**2. Beta:**
+
+Ranges from 0.18 to 1.11.
+Measures the sensitivity of a firm's returns to market fluctuations.
+
+**3. PE_Ratio:**
+
+Ranges from 3.6 to 82.5.
+Represents the valuation of a firm's stock relative to its earnings.
+
+**4. ROE:**
+
+Ranges from 3.9 to 62.9.
+Indicates how effectively a firm utilizes shareholder equity to generate profit.
+
+**5. ROA:**
+
+Ranges from 0.3 to 1.1.
+Measures a firm's ability to generate profit from its assets.
+
+**6. Asset_Turnover:**
+
+Ranges from 0.5 to 1.1.
+Represents how efficiently a firm utilizes its assets to generate revenue.
+
+**7. Leverage:**
+
+Ranges from 0 to 3.51.
+Reflects the extent to which a firm uses debt to finance its operations.
+
+**8. Rev_Growth:**
+
+Ranges from -3.17 to 34.21.
+Indicates the percentage change in revenue over a specific period.
+
+**9.Net_Profit_Margin:**
+
+Ranges from 2.6 to 25.54.
+Represents the percentage of revenue that turns into profit.
+
+### Normalising Data
+
+```{r}
+
+norm_data = scale(filter_data) 
+row.names(norm_data) = data[,1] 
+distance = get_dist(norm_data) 
+corr = cor(norm_data) 
+
+```
+
+### Reason for Normalization
+
+Normalization of the numerical variables is crucial to ensure that each variable contributes proportionally to the clustering process. Since these variables may have different units or scales, normalizing them helps prevent one variable from dominating the clustering based on its magnitude. For example, Market_Cap is in the hundreds, while Beta is a fraction between 0 and 1.
+
+
+```{r}
+
+fviz_nbclust(norm_data, kmeans, method = "silhouette")
+
+```
+
+### Reason for choosing 5 clusters
+
+Silhouette analysis measures how similar an object is to its own cluster compared to other clusters. It provides a graphical representation of the quality of clusters for different values of k.
+
+```{r}
+
+set.seed(1) 
+k5 = kmeans(norm_data, centers = 5, nstart = 25) 
+k5$centers
+
+```
+### Reason for selecting K-means
+
+Reason why i'm selecting K-means over DBSCAN is that, K-means is often used in exploratory data analysis to identify patterns and groupings within the data, K-means clustering can provide insights into the financial profiles of pharmaceutical firms. It may reveal groups of firms with similar financial characteristics, aiding in strategic decision-making or investment analysis, easy to interpret, and DBSCAN is effective for datasets with dense regions.  
+
+```{r}
+
+k5$size 
+
+fviz_cluster(k5, data = norm_data)
+
+```
+
+### Appropriate Name:
+
+Cluster 1 - High Revenue Growth, Low Profit Margins
+
+Cluster 2 - High PE Ratios, Low Profitability
+
+Cluster 3 - High Market Cap, Moderate Profitability
+
+Cluster 4 - High Leverage, High Beta
+
+Cluster 5 - Very High Market Cap, High Profitability
+
+### Interpretation of Clusters based on Variables used forming Clusters:
+
+**Cluster 1:** AVE, WPI, MRX, ELN exhibit moderate values across Market_Cap, Beta, PE_Ratio, ROE, ROA, Asset_Turnover, Leverage, Rev_Growth, and Net_Profit_Margin.
+
+**Cluster 2:** PHA, AGN exhibit lower Market_Cap, Beta, and PE_Ratio.
+
+**Cluster 3:** WYE, BMY,AZN, SGP, AHM, LLY,NVS, ABT exhibit higher Market_Cap, Beta, PE_Ratio, Rev_Growth, and Net_Profit_Margin compared to other clusters.
+
+**Cluster 4:** IVX, CHTT, BAY exhibit lower Market_Cap and PE_Ratio.
+
+**Cluster 5:** GSK, PFE, MRK, JNJ exhibit higher values across Market_Cap, Beta, PE_Ratio, ROE, ROA, Asset_Turnover, Rev_Growth, and Net_Profit_Margin.
+
+
+
+### Elbow
+
+```{r}
+
+fviz_nbclust(norm_data, kmeans, method = "wss")
+
+```
+
+### Manhattan
+
+```{r}
+
+set.seed(1) 
+k51 = kcca(norm_data, k=5, kccaFamily("kmedians")) 
+k51
+
+clusters_index = predict(k51) 
+dist(k51@centers)
+
+image(k51) 
+points(norm_data, col=clusters_index, pch=19, cex=0.3)
+
+```
+
+```{r}
+
+filter_data %>% mutate(Cluster = k5$cluster) %>% group_by(Cluster) %>% summarise_all("mean")
+
+clusplot(norm_data,k5$cluster, main="Clusters",color = TRUE, labels = 3,lines = 0)
+
+```
+
+```{r}
+
+clust_data = data[12:14] %>% mutate(Clusters=k5$cluster) 
+ggplot(clust_data, mapping = aes(factor(Clusters), 
+fill =Median_Recommendation))+geom_bar(position='dodge')+labs(x ='Clusters')
+
+```
+
+```{r}
+
+ggplot(clust_data, mapping = aes(factor(Clusters),fill = Location))+geom_bar(position = 'dodge')+labs(x ='Clusters')
+
+```
+
+```{r}
+
+ggplot(clust_data, mapping = aes(factor(Clusters),fill = Exchange))+geom_bar(position = 'dodge')+labs(x ='Clusters')
+
+```
+
+### Interpretation of Clusters based on Variables 10 to 12:
+
+**Cluster 1:**
+
+***Median Recommendation:***  Cluster 1 has moderate buy and moderate sell.
+
+***Location:*** Cluster 1 has three Locations,in which US is the highest.
+
+***Exchange:*** Cluster 1 has only one exchange that is NYSE.
+
+**Cluster 2:**
+
+***Median Recommendation:*** Cluster 2 has low hold and low buy
+
+***Location:*** Cluster 2 has only two locations(US and Canada) and evenly distributed .
+
+***Exchange:*** Cluster 2 has only one exchange that is NYSE.
+
+**Cluster 3:**
+
+***Median Recommendation:*** Cluster 3 very strong hold and high moderate sell
+
+***Location:*** Cluster 3 has three locations, US has more numbers, then UK and Switzerland
+
+***Exchange:*** Cluster 3 has only one exchange, that is NYSE which is very high in numbers.
+
+**Cluster 4:**
+
+***Median Recommendation:*** Cluster 4 has strong hold and low buy.
+
+***Location:*** Cluster 4 has two locations in which US is high compared to Germany.
+
+***Exchange:*** Cluster 4 has three exchanges(AMEX, NASDAQ, NYSE) and all of them are evenly distributed.
+
+**Cluster 5:**
+
+***Median Recommendation:*** Cluster 5 has high hold and high buy.
+
+***Location:*** Cluster 5 has two locations in which US is in large number compared to UK which is very less.
+
+***Exchange:*** Cluster 5 has only one exchange that is NYSE.
