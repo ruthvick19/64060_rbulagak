@@ -3,8 +3,8 @@ title: "BA64060_Assignment4"
 author: "Ruthvick Bulagakula"
 date: "2023-11-10"
 output:
-  pdf_document: default
   html_document: default
+  pdf_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -16,7 +16,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 
 library(cluster) 
-library(tidyverse)
+library(dplyr)
 library(flexclust)
 library(factoextra)
 library(FactoMineR) 
@@ -26,6 +26,8 @@ library(dbscan)
 ```
 
 ### Reading Data
+
+By using read.csv function we can read data in the csv file.
 
 ```{r}
 
@@ -130,15 +132,15 @@ fviz_cluster(k5, data = norm_data)
 
 ### Appropriate Name:
 
-Cluster 1 - High Revenue Growth, Low Profit Margins
+Cluster 1 - Profitable Ventures
 
-Cluster 2 - High PE Ratios, Low Profitability
+Cluster 2 - Risk-Reward Seekers
 
-Cluster 3 - High Market Cap, Moderate Profitability
+Cluster 3 - Stable Giants
 
-Cluster 4 - High Leverage, High Beta
+Cluster 4 - Beta Boosted Enterprises
 
-Cluster 5 - Very High Market Cap, High Profitability
+Cluster 5 - Market Dominators
 
 ### Interpretation of Clusters based on Variables used forming Clusters:
 
@@ -156,13 +158,19 @@ Cluster 5 - Very High Market Cap, High Profitability
 
 ### Elbow
 
+The elbow method is used to determine the optimal number of clusters (k) in a k-means clustering analysis
+
 ```{r}
 
 fviz_nbclust(norm_data, kmeans, method = "wss")
 
 ```
 
+The choice of k=5 suggests that there is a reasonable balance between model complexity and the ability to explain variance in the data. Beyond k=5, the reduction in within-cluster sum of squares becomes less significant, indicating diminishing returns in terms of explaining the variance.
+
 ### Manhattan
+
+It measures the sum of absolute differences between coordinates
 
 ```{r}
 
